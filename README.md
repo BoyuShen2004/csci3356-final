@@ -46,13 +46,22 @@ This installs the packages listed in `requirements.txt` (including Django) into 
    cd perch
    ```
 
-2. Start the development server:
+2. Initialize your local database (required before running the server):
+
+   ```bash
+   python manage.py migrate
+   python manage.py load_mock_data
+   ```
+
+   This project does not distribute Google OAuth client credentials (`client_id` / `client_secret`) in the repository. Running migrations and loading mock data ensures everyone can start with a consistent local dataset and test the app safely in development.
+
+3. Start the development server:
 
    ```bash
    python manage.py runserver
    ```
 
-3. Open a browser and go to:
+4. Open a browser and go to:
 
    **http://127.0.0.1:8000/**
 
@@ -61,18 +70,6 @@ To stop the server, press `Ctrl+C` in the terminal.
 ---
 
 ## 4. After local changes: clean and push to GitHub
-
-Before you commit and push, remove the local SQLite database file so it is not tracked:
-
-```bash
-rm -f perch/db.sqlite3
-```
-
-If `db.sqlite3` was already tracked in git, also run:
-
-```bash
-git rm --cached perch/db.sqlite3
-```
 
 Then push your work using your own branch (do **not** push directly to `main`):
 
@@ -94,6 +91,7 @@ After pushing, open a Pull Request from your branch to the original repository's
 | Create environment| `conda create -n perch python=3.9 -y`       |
 | Activate          | `conda activate perch`                       |
 | Install deps      | `pip install -r requirements.txt`            |
+| Initialize DB     | `cd perch` then `python manage.py migrate` and `python manage.py load_mock_data` |
 | Run app           | `cd perch` then `python manage.py runserver` |
 
 ---
