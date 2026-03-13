@@ -1,0 +1,109 @@
+{% extends "perchapp/base.html" %}
+
+{% block title %}{{ building.name }} · Perch{% endblock %}
+
+{% block content %}
+<a href="{% url 'perchapp:building_list' %}" class="text-decoration-none small text-muted">
+  &larr; Back to results
+</a>
+
+<div class="row mt-3">
+  <div class="col-12 col-lg-8 mb-3 mb-lg-0">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <h3 class="card-title mb-1">{{ building.name }}</h3>
+        <p class="text-muted mb-2">
+          {{ building.full_address }}
+          {% if building.neighborhood %}
+            &middot; {{ building.neighborhood }}
+          {% endif %}
+        </p>
+
+        {% if building.description %}
+          <p class="mb-3">
+            {{ building.description }}
+          </p>
+        {% endif %}
+
+        <div class="row small text-muted mb-3">
+          <div class="col-6 mb-2">
+            <span class="label">Total units</span>
+            <div class="value">
+              {% if building.total_units %}{{ building.total_units }}{% else %}&mdash;{% endif %}
+            </div>
+          </div>
+          <div class="col-6 mb-2">
+            <span class="label">Available units</span>
+            <div class="value">
+              {% if building.available_units %}{{ building.available_units }}{% else %}&mdash;{% endif %}
+            </div>
+          </div>
+          <div class="col-6 mb-2">
+            <span class="label">Bedrooms</span>
+            <div class="value">
+              {% if building.bedrooms %}{{ building.bedrooms }}+{% else %}&mdash;{% endif %}
+            </div>
+          </div>
+          <div class="col-6 mb-2">
+            <span class="label">Rent range</span>
+            <div class="value">
+              {% if building.min_rent or building.max_rent %}
+                {% if building.min_rent %}${{ building.min_rent }}{% endif %}
+                {% if building.max_rent %} - ${{ building.max_rent }}{% endif %}
+              {% else %}
+                &mdash;
+              {% endif %}
+            </div>
+          </div>
+        </div>
+
+        {% if building.amenities %}
+          <h6 class="fw-semibold">Amenities</h6>
+          <p class="small text-muted">
+            {{ building.amenities }}
+          </p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <div class="col-12 col-lg-4">
+    <div class="card shadow-sm mb-3">
+      <div class="card-body">
+        <h6 class="fw-semibold mb-2">Contact</h6>
+        <ul class="list-unstyled small mb-0">
+          {% if building.phone %}
+            <li><span class="text-muted">Phone:</span> {{ building.phone }}</li>
+          {% endif %}
+          {% if building.email %}
+            <li><span class="text-muted">Email:</span> {{ building.email }}</li>
+          {% endif %}
+          {% if building.website %}
+            <li>
+              <span class="text-muted">Website:</span>
+              <a href="{{ building.website }}" target="_blank" rel="noopener">
+                {{ building.website }}
+              </a>
+            </li>
+          {% endif %}
+        </ul>
+      </div>
+    </div>
+
+    {% if building.latitude and building.longitude %}
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h6 class="fw-semibold mb-2">Location</h6>
+          <p class="small text-muted mb-2">
+            Lat {{ building.latitude }}, Lon {{ building.longitude }}
+          </p>
+          <p class="small text-muted mb-0">
+            You can embed a map widget here using your preferred maps provider.
+          </p>
+        </div>
+      </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}
+

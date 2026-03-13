@@ -1,0 +1,230 @@
+{% extends "perchapp/base.html" %}
+{% block title %}Admin Dashboard - Perch{% endblock %}
+{% block topbar_title %}Admin Dashboard{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <div>
+    <h4 class="fw-bold mb-1">Admin Dashboard</h4>
+    <p class="text-muted mb-0">Platform overview and moderation tools</p>
+  </div>
+  <span class="badge bg-danger fs-6">
+    <i class="fa-solid fa-shield-halved me-1"></i>Admin
+  </span>
+</div>
+
+<!-- Stats Cards -->
+<div class="row g-3 mb-4">
+  <div class="col-md-3 col-6">
+    <div class="card border-0 shadow-sm bg-primary text-white">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
+            <h3 class="fw-bold mb-0">{{ stats.total_listings }}</h3>
+            <small class="opacity-75">Total Listings</small>
+          </div>
+          <i class="fa-solid fa-building fs-3 opacity-50"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3 col-6">
+    <div class="card border-0 shadow-sm bg-success text-white">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
+            <h3 class="fw-bold mb-0">{{ stats.total_users }}</h3>
+            <small class="opacity-75">Registered Students</small>
+          </div>
+          <i class="fa-solid fa-users fs-3 opacity-50"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3 col-6">
+    <div class="card border-0 shadow-sm bg-warning text-dark">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
+            <h3 class="fw-bold mb-0">{{ stats.total_applications }}</h3>
+            <small class="opacity-75">Applications</small>
+          </div>
+          <i class="fa-solid fa-file-lines fs-3 opacity-50"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3 col-6">
+    <div class="card border-0 shadow-sm bg-info text-white">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
+            <h3 class="fw-bold mb-0">${{ stats.avg_rent }}</h3>
+            <small class="opacity-75">Avg Monthly Rent</small>
+          </div>
+          <i class="fa-solid fa-dollar-sign fs-3 opacity-50"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-4">
+  <!-- Listings Overview -->
+  <div class="col-md-6">
+    <div class="card border-0 shadow-sm h-100">
+      <div class="card-header bg-white">
+        <h6 class="mb-0 fw-bold">Listings Overview</h6>
+      </div>
+      <div class="card-body">
+        {% if stats.total_listings > 0 %}
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <span>Available</span>
+          <div class="d-flex align-items-center gap-2">
+            <div class="progress flex-grow-1" style="width: 150px; height: 8px;">
+              <div class="progress-bar bg-success" style="width: {% widthratio stats.available stats.total_listings 100 %}%;"></div>
+            </div>
+            <strong>{{ stats.available }}</strong>
+          </div>
+        </div>
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <span>Pending Review</span>
+          <div class="d-flex align-items-center gap-2">
+            <div class="progress flex-grow-1" style="width: 150px; height: 8px;">
+              <div class="progress-bar bg-warning" style="width: {% widthratio stats.pending stats.total_listings 100 %}%;"></div>
+            </div>
+            <strong>{{ stats.pending }}</strong>
+          </div>
+        </div>
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <span>Rented</span>
+          <div class="d-flex align-items-center gap-2">
+            <div class="progress flex-grow-1" style="width: 150px; height: 8px;">
+              <div class="progress-bar bg-secondary" style="width: {% widthratio stats.rented stats.total_listings 100 %}%;"></div>
+            </div>
+            <strong>{{ stats.rented }}</strong>
+          </div>
+        </div>
+        {% endif %}
+        <hr />
+        <div class="d-flex justify-content-between align-items-center">
+          <span>Verified Listings</span>
+          <strong>{{ stats.verified_listings }} / {{ stats.total_listings }}</strong>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Applications Overview -->
+  <div class="col-md-6">
+    <div class="card border-0 shadow-sm h-100">
+      <div class="card-header bg-white">
+        <h6 class="mb-0 fw-bold">Applications Overview</h6>
+      </div>
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <span><span class="badge bg-warning text-dark me-1">Pending</span></span>
+          <strong>{{ stats.pending_apps }}</strong>
+        </div>
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <span><span class="badge bg-success me-1">Accepted</span></span>
+          <strong>{{ stats.accepted_apps }}</strong>
+        </div>
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <span><span class="badge bg-danger me-1">Declined</span></span>
+          <strong>{{ stats.declined_apps }}</strong>
+        </div>
+        <hr />
+        <div class="d-flex justify-content-between align-items-center">
+          <span>Acceptance Rate</span>
+          <strong>{{ stats.acceptance_rate }}%</strong>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pending Reports -->
+  <div class="col-md-6">
+    <div class="card border-0 shadow-sm">
+      <div class="card-header bg-white d-flex justify-content-between align-items-center">
+        <h6 class="mb-0 fw-bold">
+          Pending Reports
+          {% if stats.pending_reports > 0 %}<span class="badge bg-danger ms-2">{{ stats.pending_reports }}</span>{% endif %}
+        </h6>
+      </div>
+      <div class="card-body">
+        {% if not pending_reports_list %}
+        <p class="text-muted text-center mb-0">No pending reports</p>
+        {% else %}
+        {% for report in pending_reports_list %}
+        <div class="d-flex gap-3 mb-3 pb-3 border-bottom">
+          <div class="badge {% if report.report_type == 'listing' %}bg-warning text-dark{% else %}bg-danger{% endif %} align-self-start">
+            {% if report.report_type == 'listing' %}<i class="fa-solid fa-building"></i>{% else %}<i class="fa-solid fa-user"></i>{% endif %}
+          </div>
+          <div class="flex-grow-1">
+            <div class="d-flex justify-content-between">
+              <strong class="small text-capitalize">{{ report.report_type }} Report</strong>
+              <small class="text-muted">{{ report.created_at|date }}</small>
+            </div>
+            <p class="small text-muted mb-1">{{ report.reason }}</p>
+            <small class="text-muted">Reported by: {{ report.reporter.first_name }} {{ report.reporter.last_name }}</small>
+          </div>
+          <div class="d-flex gap-1 align-self-start">
+            <a href="{% url 'perchapp:report_resolve' report.pk 'resolved' %}" class="btn btn-sm btn-outline-success" title="Resolve"><i class="fa-solid fa-check"></i></a>
+            <a href="{% url 'perchapp:report_resolve' report.pk 'dismissed' %}" class="btn btn-sm btn-outline-danger" title="Dismiss"><i class="fa-solid fa-xmark"></i></a>
+          </div>
+        </div>
+        {% endfor %}
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <!-- Registered Users -->
+  <div class="col-md-6">
+    <div class="card border-0 shadow-sm">
+      <div class="card-header bg-white">
+        <h6 class="mb-0 fw-bold">Registered Users</h6>
+      </div>
+      <div class="card-body p-0">
+        <div class="table-responsive">
+          <table class="table table-hover mb-0">
+            <thead class="table-light">
+              <tr>
+                <th class="small">User</th>
+                <th class="small">Role</th>
+                <th class="small">Status</th>
+                <th class="small">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for prof in users_with_profiles %}
+              <tr>
+                <td>
+                  <div class="d-flex align-items-center gap-2">
+                    <img src="{{ prof.profile_image|default:'https://i.pravatar.cc/150?img=1' }}" alt="" class="rounded-circle" width="28" height="28">
+                    <div>
+                      <div class="small fw-semibold">{{ prof.user.first_name }} {{ prof.user.last_name }}</div>
+                      <div class="text-muted" style="font-size: 0.7rem;">{{ prof.user.email }}</div>
+                    </div>
+                  </div>
+                </td>
+                <td><small class="text-capitalize">{{ prof.role }}</small></td>
+                <td>
+                  {% if prof.verified %}<span class="badge bg-success">Verified</span>{% else %}<span class="badge bg-warning text-dark">Unverified</span>{% endif %}
+                </td>
+                <td>
+                  <button type="button" class="btn btn-sm btn-outline-danger" title="Suspend User" disabled><i class="fa-solid fa-ban"></i></button>
+                </td>
+              </tr>
+              {% empty %}
+              <tr><td colspan="4" class="text-center text-muted">No users</td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

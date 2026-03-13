@@ -1,0 +1,48 @@
+{% load static %}
+<div class="card listing-card h-100 border-0 shadow-sm">
+  <div class="position-relative">
+    <a href="{% url 'perchapp:listing_detail' listing.pk %}"><img src="{{ listing.images_list.0 }}" class="card-img-top listing-card-img" alt="{{ listing.title }}"></a>
+    {% if user.is_authenticated %}
+    <div class="position-absolute top-0 end-0 p-2">
+      <a href="{% url 'perchapp:toggle_favorite' listing.pk %}?next={{ request.path }}" class="btn btn-sm rounded-circle {% if is_favorite %}btn-danger{% else %}btn-light{% endif %}" style="width: 36px; height: 36px;"><i class="fa-{% if is_favorite %}solid{% else %}regular{% endif %} fa-heart"></i></a>
+    </div>
+    {% endif %}
+    <div class="position-absolute top-0 start-0 p-2 d-flex gap-1">
+      <span class="badge {% if listing.status == 'available' %}bg-success{% elif listing.status == 'pending' %}bg-warning text-dark{% else %}bg-secondary{% endif %}">{{ listing.get_status_display }}</span>
+      {% if listing.verified %}<span class="badge bg-primary"><i class="fa-solid fa-check me-1"></i>Verified</span>{% endif %}
+    </div>
+    <div class="position-absolute bottom-0 start-0 p-2"><span class="badge bg-dark bg-opacity-75 fs-6">${{ listing.monthly_rent|floatformat:0 }}/mo</span></div>
+  </div>
+  <a href="{% url 'perchapp:listing_detail' listing.pk %}" class="text-decoration-none text-dark">
+  <div class="card-body">
+    <h6 class="card-title fw-bold mb-1 text-truncate">{{ listing.title }}</h6>
+    <p class="text-muted small mb-2"><i class="fa-solid fa-location-dot me-1"></i>{{ listing.address }}, {{ listing.city }}</p>
+    <div class="d-flex gap-3 text-muted small mb-2">
+      <span><i class="fa-solid fa-bed me-1"></i>{% if listing.bedrooms == 0 %}Studio{% else %}{{ listing.bedrooms }} BR{% endif %}</span>
+      <span><i class="fa-solid fa-bath me-1"></i>{{ listing.bathrooms }} BA</span>
+      <span><i class="fa-solid fa-ruler-combined me-1"></i>{{ listing.sqft }} sqft</span>
+    </div>
+    <div class="d-flex gap-1 flex-wrap mb-2">
+      <span class="badge bg-light text-dark border">{{ listing.lease_type }}</span>
+      <span class="badge bg-light text-dark border">{{ listing.property_type }}</span>
+      {% if listing.furnished %}<span class="badge bg-light text-dark border">Furnished</span>{% endif %}
+      {% if listing.pets_allowed %}<span class="badge bg-light text-dark border">Pets OK</span>{% endif %}
+    </div>
+    <p class="text-muted small mb-0"><i class="fa-regular fa-calendar me-1"></i>{{ listing.available_from|date:"M j" }} - {{ listing.available_to|date:"M j, Y" }}</p>
+  </div>
+  <div class="card-footer bg-white border-top d-flex align-items-center justify-content-between">
+    <div class="d-flex align-items-center gap-2">
+      <img src="{{ listing.owner_image }}" alt="" class="rounded-circle" width="24" height="24">
+      <small class="text-muted">{{ listing.owner.first_name }} {{ listing.owner.last_name }}</small>
+    </div>
+    <small class="text-muted"><i class="fa-regular fa-eye me-1"></i>{{ listing.views }}</small>
+  </div>
+  </a>
+  {% if show_actions %}
+  <div class="card-footer bg-light border-top">
+    <div class="d-flex gap-2">
+      <a href="{% url 'perchapp:edit_listing' listing.pk %}" class="btn btn-sm btn-outline-primary flex-fill"><i class="fa-solid fa-pen me-1"></i>Edit</a>
+    </div>
+  </div>
+  {% endif %}
+</div>

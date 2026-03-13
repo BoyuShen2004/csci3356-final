@@ -1,0 +1,79 @@
+{% extends "perchapp/base.html" %}
+{% block title %}Applications - Perch{% endblock %}
+{% block topbar_title %}Applications{% endblock %}
+
+{% block content %}
+<h4 class="fw-bold mb-4">Applications</h4>
+
+<ul class="nav nav-tabs mb-4">
+  <li class="nav-item"><a class="nav-link {% if tab == 'submitted' %}active{% endif %}" href="?tab=submitted"><i class="fa-solid fa-paper-plane me-1"></i>My Applications <span class="badge bg-primary ms-1">{{ my_applications|length }}</span></a></li>
+  <li class="nav-item"><a class="nav-link {% if tab == 'received' %}active{% endif %}" href="?tab=received"><i class="fa-solid fa-inbox me-1"></i>Received <span class="badge bg-primary ms-1">{{ received_data|length }}</span></a></li>
+</ul>
+
+{% if tab == 'submitted' %}
+  {% if my_applications %}
+  <div class="row g-3">
+    {% for app in my_applications %}
+    <div class="col-12">
+      <div class="card border-0 shadow-sm">
+        <div class="card-body">
+          <div class="row align-items-center">
+            <div class="col-md-2"><a href="{% url 'perchapp:listing_detail' app.listing.pk %}"><img src="{{ app.listing.images_list.0 }}" alt="" class="rounded w-100" style="height: 80px; object-fit: cover;"></a></div>
+            <div class="col-md-4"><h6 class="fw-bold mb-1"><a href="{% url 'perchapp:listing_detail' app.listing.pk %}" class="text-decoration-none text-dark">{{ app.listing.title }}</a></h6><small class="text-muted"><i class="fa-solid fa-location-dot me-1"></i>{{ app.listing.address }}, {{ app.listing.city }}</small><div class="small text-muted mt-1">Listed by {{ app.listing.owner.first_name }} {{ app.listing.owner.last_name }}</div></div>
+            <div class="col-md-3"><div class="small"><div><strong>Applied:</strong> {{ app.created_at|date }}</div><div><strong>Dates:</strong> {{ app.requested_from|date:"M j" }} - {{ app.requested_to|date:"M j" }}</div><div><strong>Rent:</strong> ${{ app.listing.monthly_rent }}/mo</div></div></div>
+            <div class="col-md-3 text-md-end"><span class="badge {% if app.status == 'pending' %}bg-warning text-dark{% elif app.status == 'accepted' %}bg-success{% else %}bg-danger{% endif %}">{{ app.get_status_display }}</span></div>
+          </div>
+          {% if app.message %}<div class="mt-2 p-2 bg-light rounded small text-muted"><i class="fa-solid fa-quote-left me-1"></i>{{ app.message }}</div>{% endif %}
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="text-center py-5">
+    <i class="fa-solid fa-file-lines fs-1 text-muted mb-3 d-block"></i>
+    <h5 class="text-muted">No applications yet</h5>
+    <p class="text-muted">Browse listings and apply for places you like.</p>
+    <a href="{% url 'perchapp:search' %}" class="btn btn-primary">Browse Listings</a>
+  </div>
+  {% endif %}
+{% else %}
+  {% if received_data %}
+  <div class="row g-3">
+    {% for item in received_data %}
+    {% with app=item.app applicant_profile=item.applicant_profile %}
+    <div class="col-12">
+      <div class="card border-0 shadow-sm">
+        <div class="card-body">
+          <div class="row align-items-center">
+            <div class="col-md-1"><img src="{% if applicant_profile %}{{ applicant_profile.profile_image|default:'https://i.pravatar.cc/150?img=1' }}{% else %}https://i.pravatar.cc/150?img=1{% endif %}" alt="" class="rounded-circle" width="48" height="48"></div>
+            <div class="col-md-3"><h6 class="fw-bold mb-0">{{ app.applicant.first_name }} {{ app.applicant.last_name }}</h6><small class="text-muted">{% if applicant_profile %}{{ applicant_profile.year }} &bull; {{ applicant_profile.major }}{% endif %}</small></div>
+            <div class="col-md-3"><small class="text-muted d-block">Applied for:</small><strong class="small"><a href="{% url 'perchapp:listing_detail' app.listing.pk %}" class="text-decoration-none text-dark">{{ app.listing.title }}</a></strong></div>
+            <div class="col-md-2"><div class="small">{{ app.requested_from|date:"M j" }} - {{ app.requested_to|date:"M j" }}</div><div class="text-muted">{{ app.created_at|date }}</div></div>
+            <div class="col-md-3 text-md-end">
+              {% if app.status == 'pending' %}
+              <div class="d-flex gap-1 justify-content-md-end">
+                <a href="{% url 'perchapp:update_application_status' app.pk 'accepted' %}" class="btn btn-sm btn-success"><i class="fa-solid fa-check me-1"></i>Accept</a>
+                <a href="{% url 'perchapp:update_application_status' app.pk 'declined' %}" class="btn btn-sm btn-outline-danger"><i class="fa-solid fa-xmark me-1"></i>Decline</a>
+              </div>
+              {% else %}
+              <span class="badge {% if app.status == 'accepted' %}bg-success{% else %}bg-danger{% endif %}">{{ app.get_status_display }}</span>
+              {% endif %}
+            </div>
+          </div>
+          {% if app.message %}<div class="mt-2 p-2 bg-light rounded small text-muted"><i class="fa-solid fa-quote-left me-1"></i>{{ app.message }}</div>{% endif %}
+        </div>
+      </div>
+    </div>
+    {% endwith %}
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="text-center py-5">
+    <i class="fa-solid fa-inbox fs-1 text-muted mb-3 d-block"></i>
+    <h5 class="text-muted">No applications received</h5>
+    <p class="text-muted">Create a listing to start receiving applications.</p>
+  </div>
+  {% endif %}
+{% endif %}
+{% endblock %}

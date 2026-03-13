@@ -1,0 +1,87 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Perch - BC Housing</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+  <link href="{% static 'perchapp/styles.css' %}" rel="stylesheet">
+</head>
+<body>
+  <div class="landing-page">
+    <section class="hero-section">
+      <nav class="navbar navbar-expand-lg navbar-dark position-absolute w-100 top-0" style="z-index: 10;">
+        <div class="container">
+          <a class="navbar-brand fw-bold d-flex align-items-center gap-2" href="{% url 'perchapp:landing' %}">
+            <div class="brand-icon-lg"><i class="fa-solid fa-house-chimney"></i></div>
+            Perch
+          </a>
+          <div class="d-flex gap-2">
+            {% if user.is_authenticated %}
+            <a href="{% url 'perchapp:dashboard' %}" class="btn btn-light fw-semibold">Go to Dashboard</a>
+            {% else %}
+            <a href="{% url 'perchapp:login' %}" class="btn btn-outline-light">Log In</a>
+            <a href="{% url 'perchapp:signup' %}" class="btn btn-light fw-semibold">Sign Up</a>
+            {% endif %}
+          </div>
+        </div>
+      </nav>
+      <div class="hero-overlay">
+        <div class="container text-center text-white">
+          <h1 class="display-3 fw-bold mb-3">Find Your Perfect<br><span class="text-warning">BC Sublet</span></h1>
+          <p class="lead mb-4 mx-auto" style="max-width: 600px;">A trusted platform exclusively for Boston College students to find and offer off-campus housing and summer sublets within a safe, verified community.</p>
+          <div class="d-flex gap-3 justify-content-center flex-wrap">
+            <a href="{% url 'perchapp:search' %}" class="btn btn-warning btn-lg fw-semibold px-4"><i class="fa-solid fa-magnifying-glass me-2"></i>Browse Listings</a>
+            <a href="{% url 'perchapp:create_listing' %}" class="btn btn-outline-light btn-lg px-4"><i class="fa-solid fa-plus me-2"></i>Post a Sublet</a>
+          </div>
+          <div class="row mt-5 g-4 justify-content-center">
+            <div class="col-auto"><div class="text-center"><h3 class="fw-bold mb-0">8+</h3><small class="text-white-50">Active Listings</small></div></div>
+            <div class="col-auto px-4"><div class="text-center"><h3 class="fw-bold mb-0">6</h3><small class="text-white-50">Verified Students</small></div></div>
+            <div class="col-auto"><div class="text-center"><h3 class="fw-bold mb-0">100%</h3><small class="text-white-50">BC Verified</small></div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section class="py-5 bg-white">
+      <div class="container py-4">
+        <h2 class="text-center fw-bold mb-2">Why Perch?</h2>
+        <p class="text-center text-muted mb-5">Built by BC students, for BC students</p>
+        <div class="row g-4">
+          <div class="col-md-4"><div class="card border-0 text-center p-4 h-100 feature-card"><div class="feature-icon mx-auto mb-3"><i class="fa-solid fa-shield-halved"></i></div><h5 class="fw-bold">Trusted Network</h5><p class="text-muted small">Only verified BC students can access the platform.</p></div></div>
+          <div class="col-md-4"><div class="card border-0 text-center p-4 h-100 feature-card"><div class="feature-icon mx-auto mb-3"><i class="fa-solid fa-map-location-dot"></i></div><h5 class="fw-bold">Interactive Map</h5><p class="text-muted small">Browse listings on an interactive map.</p></div></div>
+          <div class="col-md-4"><div class="card border-0 text-center p-4 h-100 feature-card"><div class="feature-icon mx-auto mb-3"><i class="fa-solid fa-file-signature"></i></div><h5 class="fw-bold">Easy Agreements</h5><p class="text-muted small">Automated sublet agreement generation.</p></div></div>
+        </div>
+      </div>
+    </section>
+    <section class="py-5 bg-light">
+      <div class="container py-4">
+        <h2 class="text-center fw-bold mb-5">How It Works</h2>
+        <div class="row g-4 align-items-start">
+          <div class="col-md-3 text-center"><div class="step-number mx-auto">1</div><h6 class="fw-bold mt-3">Verify with BC Email</h6><p class="text-muted small">Sign up with your @bc.edu email.</p></div>
+          <div class="col-md-3 text-center"><div class="step-number mx-auto">2</div><h6 class="fw-bold mt-3">Browse or Post</h6><p class="text-muted small">Search available sublets or create your own listing.</p></div>
+          <div class="col-md-3 text-center"><div class="step-number mx-auto">3</div><h6 class="fw-bold mt-3">Connect & Apply</h6><p class="text-muted small">Message listers, submit applications.</p></div>
+          <div class="col-md-3 text-center"><div class="step-number mx-auto">4</div><h6 class="fw-bold mt-3">Move In</h6><p class="text-muted small">Sign your agreement and enjoy your new place!</p></div>
+        </div>
+      </div>
+    </section>
+    <section class="py-5 bg-maroon text-white">
+      <div class="container text-center py-4">
+        <h2 class="fw-bold mb-3">Ready to find your summer sublet?</h2>
+        <p class="mb-4 opacity-75">Join the BC housing community today.</p>
+        <a href="{% url 'perchapp:signup' %}" class="btn btn-warning btn-lg fw-semibold px-5">Get Started <i class="fa-solid fa-arrow-right ms-2"></i></a>
+      </div>
+    </section>
+    <footer class="bg-dark text-white py-4">
+      <div class="container">
+        <div class="row align-items-center">
+          <div class="col-md-6"><div class="d-flex align-items-center gap-2"><i class="fa-solid fa-house-chimney"></i><span class="fw-bold">Perch</span><span class="text-white-50">| BC Housing Platform</span></div></div>
+          <div class="col-md-6 text-md-end"><small class="text-white-50">&copy; 2026 Perch. Built for Boston College students.</small></div>
+        </div>
+      </div>
+    </footer>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,11 @@
+{% extends "perchapp/base.html" %}
+{% block title %}Login Error - Perch{% endblock %}
+{% block topbar_title %}Login Error{% endblock %}
+{% block content %}
+<div class="text-center py-5">
+  <i class="fa-solid fa-triangle-exclamation fs-1 text-danger mb-3 d-block"></i>
+  <h4 class="mb-3">This BC email is already used.</h4>
+  <p class="text-muted mb-4">Please sign in with that account, or sign up using a different BC email.</p>
+  <a href="{% url 'perchapp:login' %}" class="btn btn-primary">Back to Login</a>
+</div>
+{% endblock %}

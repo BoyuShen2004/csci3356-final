@@ -1,0 +1,128 @@
+{% extends "perchapp/base.html" %}
+{% block title %}{{ listing.title }} - Perch{% endblock %}
+{% block topbar_title %}{{ listing.title|truncatechars:30 }}{% endblock %}
+
+{% block content %}
+<nav class="mb-3">
+  <ol class="breadcrumb small">
+    <li class="breadcrumb-item"><a href="{% url 'perchapp:search' %}">Listings</a></li>
+    <li class="breadcrumb-item active">{{ listing.title }}</li>
+  </ol>
+</nav>
+
+<div class="row g-4">
+  <div class="col-lg-8">
+    <div class="card border-0 shadow-sm mb-4">
+      <div class="position-relative">
+        <img src="{{ listing.images_list.0 }}" class="card-img-top" alt="{{ listing.title }}" style="height: 400px; object-fit: cover;">
+        <div class="position-absolute top-0 end-0 p-3 d-flex gap-2">
+          {% if user.is_authenticated %}
+          <a href="{% url 'perchapp:toggle_favorite' listing.pk %}?next={{ request.path }}" class="btn {% if is_favorite %}btn-danger{% else %}btn-light{% endif %} rounded-circle shadow-sm" style="width: 40px; height: 40px;">
+            <i class="fa-{% if is_favorite %}solid{% else %}regular{% endif %} fa-heart"></i>
+          </a>
+          {% endif %}
+        </div>
+        <div class="position-absolute top-0 start-0 p-3 d-flex gap-1">
+          <span class="badge {% if listing.status == 'available' %}bg-success{% elif listing.status == 'pending' %}bg-warning text-dark{% else %}bg-secondary{% endif %}">{{ listing.get_status_display }}</span>
+          {% if listing.verified %}<span class="badge bg-primary"><i class="fa-solid fa-check me-1"></i>Verified</span>{% endif %}
+        </div>
+      </div>
+    </div>
+
+    <div class="card border-0 shadow-sm mb-4">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-start mb-2">
+          <div>
+            <h4 class="fw-bold mb-1">{{ listing.title }}</h4>
+            <p class="text-muted mb-0"><i class="fa-solid fa-location-dot me-1"></i>{{ listing.address }}, {{ listing.city }}, {{ listing.state }} {{ listing.zip_code }}</p>
+          </div>
+          <div class="text-end">
+            <h3 class="fw-bold text-success mb-0">${{ listing.monthly_rent|floatformat:0 }}</h3>
+            <small class="text-muted">per month</small>
+          </div>
+        </div>
+        <hr>
+        <div class="row g-3 text-center">
+          <div class="col"><i class="fa-solid fa-bed text-muted mb-1 d-block"></i><strong>{% if listing.bedrooms == 0 %}Studio{% else %}{{ listing.bedrooms }}{% endif %}</strong><small class="text-muted d-block">{% if listing.bedrooms != 0 %}Bedrooms{% endif %}</small></div>
+          <div class="col"><i class="fa-solid fa-bath text-muted mb-1 d-block"></i><strong>{{ listing.bathrooms }}</strong><small class="text-muted d-block">Bathrooms</small></div>
+          <div class="col"><i class="fa-solid fa-ruler-combined text-muted mb-1 d-block"></i><strong>{{ listing.sqft }}</strong><small class="text-muted d-block">Sq Ft</small></div>
+          <div class="col"><i class="fa-solid fa-stairs text-muted mb-1 d-block"></i><strong>{{ listing.floor }}</strong><small class="text-muted d-block">Floor</small></div>
+          <div class="col"><i class="fa-solid fa-calendar text-muted mb-1 d-block"></i><strong>{{ listing.lease_type }}</strong><small class="text-muted d-block">Type</small></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card border-0 shadow-sm mb-4">
+      <div class="card-body">
+        <h5 class="fw-bold mb-3">About This Place</h5>
+        <p class="text-muted">{{ listing.description }}</p>
+        <h6 class="fw-bold mt-4 mb-2">Amenities</h6>
+        <div class="d-flex gap-2 flex-wrap mb-3">
+          {% for a in listing.amenities_list %}
+          <span class="badge bg-light text-dark border py-2 px-3"><i class="fa-solid fa-check text-success me-1"></i>{{ a }}</span>
+          {% endfor %}
+          {% if listing.furnished %}<span class="badge bg-light text-dark border py-2 px-3"><i class="fa-solid fa-couch text-success me-1"></i>Furnished</span>{% endif %}
+          {% if listing.parking %}<span class="badge bg-light text-dark border py-2 px-3"><i class="fa-solid fa-car text-success me-1"></i>Parking</span>{% endif %}
+          {% if listing.pets_allowed %}<span class="badge bg-light text-dark border py-2 px-3"><i class="fa-solid fa-paw text-success me-1"></i>Pets OK</span>{% endif %}
+          <span class="badge bg-light text-dark border py-2 px-3"><i class="fa-solid fa-shirt text-muted me-1"></i>Laundry: {{ listing.laundry }}</span>
+        </div>
+        {% if listing.rules_list %}
+        <h6 class="fw-bold mt-4 mb-2">House Rules</h6>
+        <ul class="list-unstyled">
+          {% for r in listing.rules_list %}<li class="mb-1"><i class="fa-solid fa-circle-info text-warning me-2"></i>{{ r }}</li>{% endfor %}
+        </ul>
+        {% endif %}
+        {% if listing.requirements_list %}
+        <h6 class="fw-bold mt-4 mb-2">Requirements</h6>
+        <ul class="list-unstyled">
+          {% for r in listing.requirements_list %}<li class="mb-1"><i class="fa-solid fa-user-check text-primary me-2"></i>{{ r }}</li>{% endfor %}
+        </ul>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-4">
+    <div class="card border-0 shadow-sm mb-4 sticky-top" style="top: 1rem;">
+      <div class="card-body">
+        <h5 class="fw-bold mb-3">Cost Breakdown</h5>
+        <div class="d-flex justify-content-between mb-2"><span>Monthly Rent</span><strong>${{ listing.monthly_rent|floatformat:0 }}</strong></div>
+        {% if not listing.utilities_included and listing.estimated_utilities %}<div class="d-flex justify-content-between mb-2 text-muted"><span>Est. Utilities</span><span>~${{ listing.estimated_utilities }}</span></div>{% endif %}
+        {% if listing.utilities_included %}<div class="d-flex justify-content-between mb-2 text-success"><span>Utilities</span><span>Included</span></div>{% endif %}
+        <div class="d-flex justify-content-between mb-2"><span>Security Deposit</span><span>${{ listing.security_deposit|floatformat:0 }}</span></div>
+        {% if listing.broker_fee %}<div class="d-flex justify-content-between mb-2"><span>Broker Fee</span><span>${{ listing.broker_fee }}</span></div>{% endif %}
+        {% if listing.application_fee %}<div class="d-flex justify-content-between mb-2"><span>Application Fee</span><span>${{ listing.application_fee }}</span></div>{% endif %}
+        <hr>
+        <div class="d-flex justify-content-between fw-bold"><span>Total Upfront</span><span class="text-success">${{ total_upfront|floatformat:0 }}</span></div>
+        <small class="text-muted d-block mt-1">First month + deposit + fees</small>
+        <hr>
+        {% if not is_owner and listing.status == 'available' %}
+          {% if has_applied %}
+          <button class="btn btn-secondary w-100 mb-2" disabled><i class="fa-solid fa-check me-2"></i>Application Submitted</button>
+          {% elif user.is_authenticated %}
+          <a href="{% url 'perchapp:apply' listing.pk %}" class="btn btn-maroon w-100 mb-2"><i class="fa-solid fa-paper-plane me-2"></i>Apply Now</a>
+          <a href="{% url 'perchapp:messages' %}" class="btn btn-outline-primary w-100 mb-2"><i class="fa-solid fa-message me-2"></i>Contact Lister</a>
+          {% else %}
+          <a href="{% url 'perchapp:login' %}?next={{ request.path }}" class="btn btn-maroon w-100 mb-2">Log in to Apply</a>
+          {% endif %}
+        {% endif %}
+        {% if is_owner %}
+        <a href="{% url 'perchapp:edit_listing' listing.pk %}" class="btn btn-outline-primary w-100 mb-2"><i class="fa-solid fa-pen me-2"></i>Edit Listing</a>
+        {% endif %}
+      </div>
+    </div>
+
+    {% if owner_profile %}
+    <div class="card border-0 shadow-sm mb-4">
+      <div class="card-body text-center">
+        <img src="{{ owner_profile.profile_image }}" alt="" class="rounded-circle mb-2" width="64" height="64">
+        <h6 class="fw-bold mb-0">{{ listing.owner.first_name }} {{ listing.owner.last_name }}</h6>
+        <small class="text-muted">{{ owner_profile.year }} &bull; {{ owner_profile.major }}</small>
+        {% if owner_profile.verified %}<div class="mt-2"><span class="badge bg-primary"><i class="fa-solid fa-shield-check me-1"></i>BC Verified</span></div>{% endif %}
+        <p class="text-muted small mt-2 mb-0">{{ owner_profile.bio }}</p>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

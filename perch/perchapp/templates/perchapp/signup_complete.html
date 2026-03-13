@@ -1,0 +1,89 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Complete Sign Up - Perch</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+  <link href="{% static 'perchapp/styles.css' %}" rel="stylesheet">
+</head>
+<body>
+  <div class="landing-page min-vh-100 d-flex align-items-center" style="background: linear-gradient(135deg, #8b1a2b 0%, #5a1018 100%);">
+    <div class="container py-4">
+      <div class="row justify-content-center">
+        <div class="col-md-6">
+          <div class="text-center mb-4">
+            <a href="{% url 'perchapp:landing' %}" class="text-decoration-none">
+              <div class="brand-icon-lg mx-auto mb-3"><i class="fa-solid fa-house-chimney"></i></div>
+              <h3 class="text-white fw-bold">Perch</h3>
+            </a>
+            <p class="text-white-50">Complete your BC Housing account</p>
+          </div>
+          <div class="card border-0 shadow-lg">
+            <div class="card-body p-4">
+              <p class="small text-muted mb-3">Signed in with: <strong>{{ user_email }}</strong></p>
+              <form method="post">
+                {% csrf_token %}
+                {% for field in form %}
+                <div class="mb-3">
+                  <label class="form-label small fw-semibold">{{ field.label }}</label>
+                  {{ field }}
+                  {% if field.errors %}<div class="text-danger small">{{ field.errors }}</div>{% endif %}
+                </div>
+                {% endfor %}
+                {% if form.non_field_errors %}<div class="text-danger small mb-2">{{ form.non_field_errors }}</div>{% endif %}
+                <button type="submit" class="btn btn-maroon w-100 py-2 fw-semibold">Finish Setup</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    (function () {
+      const pwd1 = document.querySelector('input[name="password1"]');
+      const pwd2 = document.querySelector('input[name="password2"]');
+      const submitBtn = document.querySelector('button[type="submit"]');
+      if (!pwd1 || !pwd2 || !submitBtn) return;
+
+      // Attach the status text to the Confirm password label
+      const confirmGroup = pwd2.closest('.mb-3');
+      const label = confirmGroup ? confirmGroup.querySelector('label') : null;
+      const msg = document.createElement('span');
+      msg.className = 'small ms-2';
+      if (label) {
+        label.appendChild(msg);
+      }
+
+      function update() {
+        const v1 = pwd1.value;
+        const v2 = pwd2.value;
+        if (!v1 || !v2) {
+          msg.textContent = '';
+          msg.classList.remove('text-success', 'text-danger');
+          submitBtn.disabled = true;
+          return;
+        }
+        if (v1 === v2) {
+          msg.textContent = 'Passwords match';
+          msg.classList.remove('text-danger');
+          msg.classList.add('text-success');
+          submitBtn.disabled = false;
+        } else {
+          msg.textContent = 'Passwords do not match';
+          msg.classList.remove('text-success');
+          msg.classList.add('text-danger');
+          submitBtn.disabled = true;
+        }
+      }
+
+      submitBtn.disabled = true;
+      pwd1.addEventListener('input', update);
+      pwd2.addEventListener('input', update);
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,145 @@
+{% extends "perchapp/base.html" %}
+
+{% block title %}Perch Housing Search{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+  <div class="col-12 col-lg-4 mb-3 mb-lg-0">
+    <div class="card shadow-sm filter-card">
+      <div class="card-body">
+        <h5 class="card-title fw-semibold mb-3">Filter housing</h5>
+        <form method="get">
+          <div class="mb-3">
+            <label for="q" class="form-label">Search</label>
+            <input
+              type="text"
+              id="q"
+              name="q"
+              class="form-control"
+              placeholder="Name, address, neighborhood..."
+              value="{{ filters.q }}"
+            />
+          </div>
+
+          <div class="mb-3">
+            <label for="city" class="form-label">City</label>
+            <select id="city" name="city" class="form-select">
+              <option value="">Any city</option>
+              {% for c in cities %}
+                <option value="{{ c }}" {% if filters.city == c %}selected{% endif %}>
+                  {{ c }}
+                </option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <div class="row">
+            <div class="col-6 mb-3">
+              <label for="bedrooms" class="form-label">Min bedrooms</label>
+              <input
+                type="number"
+                min="0"
+                id="bedrooms"
+                name="bedrooms"
+                class="form-control"
+                value="{{ filters.bedrooms }}"
+              />
+            </div>
+            <div class="col-6 mb-3">
+              <label for="max_rent" class="form-label">Max rent</label>
+              <input
+                type="number"
+                min="0"
+                id="max_rent"
+                name="max_rent"
+                class="form-control"
+                value="{{ filters.max_rent }}"
+              />
+            </div>
+          </div>
+
+          <div class="d-grid">
+            <button type="submit" class="btn btn-primary">
+              Apply filters
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-12 col-lg-8">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h5 class="mb-0">Results</h5>
+      <span class="text-muted small">
+        {{ buildings|length }} match{% if buildings|length != 1 %}es{% endif %}
+      </span>
+    </div>
+
+    {% if buildings %}
+      <div class="row g-3">
+        {% for building in buildings %}
+          <div class="col-12">
+            <a
+              href="{% url 'perchapp:building_detail' building.pk %}"
+              class="text-decoration-none text-reset"
+            >
+              <div class="card shadow-sm building-card h-100">
+                <div class="card-body">
+                  <div class="d-flex justify-content-between align-items-start mb-1">
+                    <div>
+                      <h5 class="card-title mb-1">{{ building.name }}</h5>
+                      <p class="card-subtitle text-muted small mb-1">
+                        {{ building.full_address }}
+                        {% if building.neighborhood %}
+                          &middot; {{ building.neighborhood }}
+                        {% endif %}
+                      </p>
+                    </div>
+                    {% if building.available_units %}
+                      <span class="badge bg-success">
+                        {{ building.available_units }} available
+                      </span>
+                    {% endif %}
+                  </div>
+
+                  <div class="row small text-muted mb-2">
+                    <div class="col-6">
+                      <span class="label">Bedrooms</span>
+                      <div class="value">
+                        {% if building.bedrooms %}{{ building.bedrooms }}+{% else %}&mdash;{% endif %}
+                      </div>
+                    </div>
+                    <div class="col-6">
+                      <span class="label">Rent range</span>
+                      <div class="value">
+                        {% if building.min_rent or building.max_rent %}
+                          {% if building.min_rent %}${{ building.min_rent }}{% endif %}
+                          {% if building.max_rent %} - ${{ building.max_rent }}{% endif %}
+                        {% else %}
+                          &mdash;
+                        {% endif %}
+                      </div>
+                    </div>
+                  </div>
+
+                  {% if building.amenities %}
+                    <div class="amenities text-muted small">
+                      {{ building.amenities }}
+                    </div>
+                  {% endif %}
+                </div>
+              </div>
+            </a>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="alert alert-light border text-muted">
+        No housing matches these filters yet. Try broadening your search.
+      </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}
+

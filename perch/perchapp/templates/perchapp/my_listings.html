@@ -1,0 +1,41 @@
+{% extends "perchapp/base.html" %}
+{% block title %}My Listings - Perch{% endblock %}
+{% block topbar_title %}My Listings{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <div>
+    <h4 class="fw-bold mb-1">My Listings</h4>
+    <p class="text-muted mb-0">Manage your property listings</p>
+  </div>
+  <a href="{% url 'perchapp:create_listing' %}" class="btn btn-maroon"><i class="fa-solid fa-plus me-2"></i>Create Listing</a>
+</div>
+
+<div class="card border-0 shadow-sm mb-4">
+  <div class="card-body py-2">
+    <ul class="nav nav-pills">
+      <li class="nav-item"><a class="nav-link {% if status_filter == 'all' %}active bg-maroon{% endif %}" href="?status=all">All <span class="badge bg-white text-dark ms-1">{{ counts.all }}</span></a></li>
+      <li class="nav-item"><a class="nav-link {% if status_filter == 'available' %}active bg-maroon{% endif %}" href="?status=available">Available <span class="badge bg-white text-dark ms-1">{{ counts.available }}</span></a></li>
+      <li class="nav-item"><a class="nav-link {% if status_filter == 'pending' %}active bg-maroon{% endif %}" href="?status=pending">Pending <span class="badge bg-white text-dark ms-1">{{ counts.pending }}</span></a></li>
+      <li class="nav-item"><a class="nav-link {% if status_filter == 'rented' %}active bg-maroon{% endif %}" href="?status=rented">Rented <span class="badge bg-white text-dark ms-1">{{ counts.rented }}</span></a></li>
+    </ul>
+  </div>
+</div>
+
+{% if listings %}
+<div class="row g-3">
+  {% for listing in listings %}
+  <div class="col-md-6 col-lg-4">
+    {% include "perchapp/_listing_card.html" with listing=listing is_favorite=False show_actions=True %}
+  </div>
+  {% endfor %}
+</div>
+{% else %}
+<div class="text-center py-5">
+  <i class="fa-solid fa-building fs-1 text-muted mb-3 d-block"></i>
+  <h5 class="text-muted">No listings yet</h5>
+  <p class="text-muted">Create your first listing to start finding subletters.</p>
+  <a href="{% url 'perchapp:create_listing' %}" class="btn btn-maroon"><i class="fa-solid fa-plus me-2"></i>Create Listing</a>
+</div>
+{% endif %}
+{% endblock %}

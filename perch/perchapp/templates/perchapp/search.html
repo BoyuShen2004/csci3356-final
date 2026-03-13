@@ -1,0 +1,116 @@
+{% extends "perchapp/base.html" %}
+{% block title %}Search Listings - Perch{% endblock %}
+{% block topbar_title %}Search Listings{% endblock %}
+
+{% block content %}
+<div class="card border-0 shadow-sm mb-3">
+  <div class="card-body py-3">
+    <form method="get" class="row g-2 align-items-center">
+      <div class="col">
+        <div class="input-group">
+          <span class="input-group-text bg-white"><i class="fa-solid fa-magnifying-glass text-muted"></i></span>
+          <input type="text" name="search" class="form-control border-start-0" placeholder="Search by location, title, or keyword..." value="{{ filters.search }}">
+        </div>
+      </div>
+      <div class="col-auto">
+        <button type="submit" class="btn btn-primary"><i class="fa-solid fa-sliders me-1"></i> Filters</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="card border-0 shadow-sm mb-3">
+  <div class="card-body">
+    <form method="get" class="row g-3">
+      <input type="hidden" name="search" value="{{ filters.search }}">
+      <div class="col-md-3 col-6">
+        <label class="form-label small fw-semibold">Min Price</label>
+        <div class="input-group input-group-sm">
+          <span class="input-group-text">$</span>
+          <input type="number" name="minPrice" class="form-control" value="{{ filters.minPrice }}" placeholder="0">
+        </div>
+      </div>
+      <div class="col-md-3 col-6">
+        <label class="form-label small fw-semibold">Max Price</label>
+        <div class="input-group input-group-sm">
+          <span class="input-group-text">$</span>
+          <input type="number" name="maxPrice" class="form-control" value="{{ filters.maxPrice }}" placeholder="5000">
+        </div>
+      </div>
+      <div class="col-md-3 col-6">
+        <label class="form-label small fw-semibold">Bedrooms</label>
+        <select class="form-select form-select-sm" name="bedrooms">
+          <option value="">Any</option>
+          <option value="0" {% if filters.bedrooms == "0" %}selected{% endif %}>Studio</option>
+          <option value="1" {% if filters.bedrooms == "1" %}selected{% endif %}>1 BR</option>
+          <option value="2" {% if filters.bedrooms == "2" %}selected{% endif %}>2 BR</option>
+          <option value="3" {% if filters.bedrooms == "3" %}selected{% endif %}>3+ BR</option>
+        </select>
+      </div>
+      <div class="col-md-3 col-6">
+        <label class="form-label small fw-semibold">Property Type</label>
+        <select class="form-select form-select-sm" name="propertyType">
+          <option value="">Any</option>
+          <option {% if filters.propertyType == "Apartment" %}selected{% endif %}>Apartment</option>
+          <option {% if filters.propertyType == "House" %}selected{% endif %}>House</option>
+          <option {% if filters.propertyType == "Studio" %}selected{% endif %}>Studio</option>
+          <option {% if filters.propertyType == "Room" %}selected{% endif %}>Room</option>
+        </select>
+      </div>
+      <div class="col-md-3 col-6">
+        <label class="form-label small fw-semibold">Lease Type</label>
+        <select class="form-select form-select-sm" name="leaseType">
+          <option value="">Any</option>
+          <option {% if filters.leaseType == "Sublease" %}selected{% endif %}>Sublease</option>
+          <option {% if filters.leaseType == "Short-term" %}selected{% endif %}>Short-term</option>
+          <option {% if filters.leaseType == "Full Lease" %}selected{% endif %}>Full Lease</option>
+        </select>
+      </div>
+      <div class="col-md-3 col-6">
+        <label class="form-label small fw-semibold">Furnished</label>
+        <select class="form-select form-select-sm" name="furnished">
+          <option value="">Any</option>
+          <option value="yes" {% if filters.furnished == "yes" %}selected{% endif %}>Furnished</option>
+          <option value="no" {% if filters.furnished == "no" %}selected{% endif %}>Unfurnished</option>
+        </select>
+      </div>
+      <div class="col-md-3 col-6">
+        <label class="form-label small fw-semibold">Pets</label>
+        <select class="form-select form-select-sm" name="petsAllowed">
+          <option value="">Any</option>
+          <option value="yes" {% if filters.petsAllowed == "yes" %}selected{% endif %}>Pets Allowed</option>
+          <option value="no" {% if filters.petsAllowed == "no" %}selected{% endif %}>No Pets</option>
+        </select>
+      </div>
+      <div class="col-md-3 col-6">
+        <label class="form-label small fw-semibold">Parking</label>
+        <select class="form-select form-select-sm" name="parking">
+          <option value="">Any</option>
+          <option value="yes" {% if filters.parking == "yes" %}selected{% endif %}>Has Parking</option>
+          <option value="no" {% if filters.parking == "no" %}selected{% endif %}>No Parking</option>
+        </select>
+      </div>
+      <div class="col-12 d-flex justify-content-between align-items-center">
+        <small class="text-muted">{{ listings|length }} listing{{ listings|length|pluralize }} found</small>
+        <button type="submit" class="btn btn-sm btn-primary">Apply Filters</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="row g-3">
+  {% if listings %}
+  {% for item in listing_data %}
+  <div class="col-md-6 col-lg-4">
+    {% include "perchapp/_listing_card.html" with listing=item.listing is_favorite=item.is_favorite %}
+  </div>
+  {% endfor %}
+  {% else %}
+  <div class="col-12 text-center py-5">
+    <i class="fa-solid fa-magnifying-glass fs-1 text-muted mb-3 d-block"></i>
+    <h5 class="text-muted">No listings found</h5>
+    <p class="text-muted">Try adjusting your filters</p>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

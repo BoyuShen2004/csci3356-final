@@ -1,0 +1,120 @@
+{% load static %}
+<nav class="sidebar d-flex flex-column">
+  <div class="sidebar-brand">
+    <a href="{% if user.is_authenticated %}{% url 'perchapp:dashboard' %}{% else %}{% url 'perchapp:landing' %}{% endif %}" class="text-decoration-none">
+      <div class="d-flex align-items-center gap-2">
+        <div class="brand-icon">
+          <i class="fa-solid fa-house-chimney"></i>
+        </div>
+        <div class="brand-text">
+          <h5 class="mb-0 fw-bold text-white">Perch</h5>
+          <small class="text-white-50">BC Housing</small>
+        </div>
+      </div>
+    </a>
+  </div>
+  {% if not user.is_authenticated %}
+  <div class="sidebar-nav flex-grow-1">
+    <ul class="nav flex-column">
+      <li class="nav-item">
+        <a href="{% url 'perchapp:search' %}" class="nav-link sidebar-link">
+          <i class="fa-solid fa-magnifying-glass sidebar-icon"></i>
+          <span>Search Listings</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a href="{% url 'perchapp:login' %}" class="nav-link sidebar-link">
+          <i class="fa-solid fa-right-to-bracket sidebar-icon"></i>
+          <span>Log In</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a href="{% url 'perchapp:signup' %}" class="nav-link sidebar-link">
+          <i class="fa-solid fa-user-plus sidebar-icon"></i>
+          <span>Sign Up</span>
+        </a>
+      </li>
+    </ul>
+  </div>
+  {% else %}
+  <div class="sidebar-nav flex-grow-1">
+    <div class="px-3 py-2 section-label">
+      <small class="text-uppercase text-white-50 fw-semibold letter-spacing">Menu</small>
+    </div>
+    <ul class="nav flex-column">
+      <li class="nav-item">
+        <a href="{% url 'perchapp:dashboard' %}" class="nav-link sidebar-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
+          <i class="fa-solid fa-house sidebar-icon"></i>
+          <span>Dashboard</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a href="{% url 'perchapp:search' %}" class="nav-link sidebar-link {% if request.resolver_match.url_name == 'search' %}active{% endif %}">
+          <i class="fa-solid fa-magnifying-glass sidebar-icon"></i>
+          <span>Search Listings</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a href="{% url 'perchapp:create_listing' %}" class="nav-link sidebar-link {% if request.resolver_match.url_name == 'create_listing' or request.resolver_match.url_name == 'edit_listing' %}active{% endif %}">
+          <i class="fa-solid fa-plus-circle sidebar-icon"></i>
+          <span>Create Listing</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a href="{% url 'perchapp:my_listings' %}" class="nav-link sidebar-link {% if request.resolver_match.url_name == 'my_listings' %}active{% endif %}">
+          <i class="fa-solid fa-building sidebar-icon"></i>
+          <span>My Listings</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a href="{% url 'perchapp:applications' %}" class="nav-link sidebar-link {% if request.resolver_match.url_name == 'applications' %}active{% endif %}">
+          <i class="fa-solid fa-file-lines sidebar-icon"></i>
+          <span>Applications</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a href="{% url 'perchapp:favorites' %}" class="nav-link sidebar-link {% if request.resolver_match.url_name == 'favorites' %}active{% endif %}">
+          <i class="fa-solid fa-heart sidebar-icon"></i>
+          <span>Favorites</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a href="{% url 'perchapp:messages' %}" class="nav-link sidebar-link {% if request.resolver_match.url_name == 'messages' %}active{% endif %}">
+          <i class="fa-solid fa-envelope sidebar-icon"></i>
+          <span>Messages</span>
+          {% if unread_count %}<span class="badge bg-danger ms-auto rounded-pill">{{ unread_count }}</span>{% endif %}
+        </a>
+      </li>
+      <li class="nav-item">
+        <a href="{% url 'perchapp:profile' %}" class="nav-link sidebar-link {% if request.resolver_match.url_name == 'profile' %}active{% endif %}">
+          <i class="fa-solid fa-user sidebar-icon"></i>
+          <span>Profile</span>
+        </a>
+      </li>
+      {% if profile.role == 'admin' %}
+      <div class="px-3 py-2 mt-3 section-label">
+        <small class="text-uppercase text-white-50 fw-semibold letter-spacing">Admin</small>
+      </div>
+      <li class="nav-item">
+        <a href="{% url 'perchapp:admin_dashboard' %}" class="nav-link sidebar-link {% if request.resolver_match.url_name == 'admin_dashboard' %}active{% endif %}">
+          <i class="fa-solid fa-shield-halved sidebar-icon"></i>
+          <span>Admin Dashboard</span>
+        </a>
+      </li>
+      {% endif %}
+    </ul>
+  </div>
+  <div class="sidebar-user">
+    <div class="d-flex align-items-center gap-2">
+      <img src="{{ profile.profile_image|default:'https://i.pravatar.cc/150?img=1' }}" alt="" class="rounded-circle" width="36" height="36">
+      <div class="flex-grow-1 min-w-0 user-info">
+        <div class="text-white fw-semibold text-truncate small">{{ display_first_name }} {{ display_last_name }}</div>
+        <div class="text-white-50 text-truncate" style="font-size: 0.7rem;">{{ user.email }}</div>
+      </div>
+      <a href="{% url 'perchapp:logout' %}" class="btn btn-sm btn-outline-light border-0 user-info" title="Sign out">
+        <i class="fa-solid fa-right-from-bracket"></i>
+      </a>
+    </div>
+  </div>
+  {% endif %}
+</nav>

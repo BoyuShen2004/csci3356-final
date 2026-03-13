@@ -1,0 +1,76 @@
+{% extends "perchapp/base.html" %}
+{% block title %}Profile - Perch{% endblock %}
+{% block topbar_title %}My Profile{% endblock %}
+
+{% block content %}
+<div class="row g-4">
+  <div class="col-lg-4">
+    <div class="card border-0 shadow-sm">
+      <div class="card-body text-center p-4">
+        <img src="{{ profile.profile_image|default:'https://i.pravatar.cc/150?img=1' }}" alt="" class="rounded-circle mb-3 border border-3" width="100" height="100">
+        <h5 class="fw-bold mb-0">{{ user.first_name }} {{ user.last_name }}</h5>
+        <p class="text-muted small">{{ user.email }}</p>
+        {% if profile.verified %}<span class="badge bg-primary mb-2"><i class="fa-solid fa-shield-check me-1"></i>BC Verified</span>{% endif %}
+        <hr>
+        <div class="text-start">
+          <div class="d-flex justify-content-between mb-2"><small class="text-muted">Role</small><small class="fw-semibold text-capitalize">{{ profile.role }}</small></div>
+          {% if profile.year %}<div class="d-flex justify-content-between mb-2"><small class="text-muted">Year</small><small class="fw-semibold">{{ profile.year }}</small></div>{% endif %}
+          {% if profile.major %}<div class="d-flex justify-content-between mb-2"><small class="text-muted">Major</small><small class="fw-semibold">{{ profile.major }}</small></div>{% endif %}
+          {% if profile.phone %}<div class="d-flex justify-content-between mb-2"><small class="text-muted">Phone</small><small class="fw-semibold">{{ profile.phone }}</small></div>{% endif %}
+          <div class="d-flex justify-content-between"><small class="text-muted">Listings</small><small class="fw-semibold">{{ user_listings|length }}</small></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-8">
+    <div class="card border-0 shadow-sm">
+      <div class="card-header bg-white d-flex justify-content-between align-items-center">
+        <h5 class="mb-0 fw-bold">Profile Information</h5>
+        {% if can_edit %}
+        <div>
+          <a href="{% url 'perchapp:profile' %}" class="btn btn-sm btn-outline-secondary me-2">Cancel</a>
+          <button type="submit" form="profile-form" class="btn btn-sm btn-maroon">Save</button>
+        </div>
+        {% else %}
+        <a href="{% url 'perchapp:profile' %}?edit=1" class="btn btn-sm btn-outline-primary">Edit</a>
+        {% endif %}
+      </div>
+      <div class="card-body">
+        {% if messages %}
+        {% for m in messages %}
+        <div class="alert alert-{{ m.tags|default:'info' }} py-2 small">{{ m }}</div>
+        {% endfor %}
+        {% endif %}
+        <form method="post" id="profile-form">
+          {% csrf_token %}
+          <div class="row g-3">
+          <div class="col-md-6"><label class="form-label small fw-semibold">First Name</label><input type="text" name="first_name" class="form-control" value="{{ user.first_name }}" {% if not can_edit %}disabled{% endif %}></div>
+          <div class="col-md-6"><label class="form-label small fw-semibold">Last Name</label><input type="text" name="last_name" class="form-control" value="{{ user.last_name }}" {% if not can_edit %}disabled{% endif %}></div>
+          <div class="col-md-6"><label class="form-label small fw-semibold">Email</label><input type="email" class="form-control" value="{{ user.email }}" disabled></div>
+          <div class="col-md-6"><label class="form-label small fw-semibold">Username</label><input type="text" class="form-control" value="{{ user.username }}" disabled></div>
+          <div class="col-md-6"><label class="form-label small fw-semibold">Phone</label><input type="tel" name="phone" class="form-control" value="{{ profile.phone|default:'' }}" {% if not can_edit %}disabled{% endif %}></div>
+          <div class="col-md-6"><label class="form-label small fw-semibold">Year</label><input type="text" name="year" class="form-control" value="{{ profile.year|default:'' }}" {% if not can_edit %}disabled{% endif %}></div>
+          <div class="col-md-6"><label class="form-label small fw-semibold">Major</label><input type="text" name="major" class="form-control" value="{{ profile.major|default:'' }}" {% if not can_edit %}disabled{% endif %}></div>
+          <div class="col-12"><label class="form-label small fw-semibold">Bio</label><textarea class="form-control" name="bio" rows="3" {% if not can_edit %}disabled{% endif %}>{{ profile.bio|default:'' }}</textarea></div>
+        </div>
+        </form>
+      </div>
+    </div>
+    <div class="card border-0 shadow-sm mt-4">
+      <div class="card-header bg-white"><h5 class="mb-0 fw-bold">Reviews ({{ user_reviews|length }})</h5></div>
+      <div class="card-body">
+        {% if user_reviews %}
+        {% for review in user_reviews %}
+        <div class="d-flex gap-3 mb-3 pb-3 border-bottom">
+          <div class="text-warning">{% for i in "12345" %}<i class="fa-{% if forloop.counter <= review.rating %}solid{% else %}regular{% endif %} fa-star"></i>{% endfor %}</div>
+          <div><p class="mb-1">{{ review.comment }}</p><small class="text-muted">{{ review.created_at|date }}</small></div>
+        </div>
+        {% endfor %}
+        {% else %}
+        <div class="text-center text-muted py-3"><i class="fa-regular fa-star fs-1 mb-2 d-block"></i><p>No reviews yet</p></div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

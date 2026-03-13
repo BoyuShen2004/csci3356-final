@@ -1,0 +1,62 @@
+{% extends "perchapp/base.html" %}
+{% block title %}Apply - {{ listing.title }}{% endblock %}
+{% block topbar_title %}Apply for Listing{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-8">
+    <div class="card border-0 shadow-sm mb-4">
+      <div class="card-body">
+        <div class="d-flex gap-3">
+          <img src="{{ listing.images_list.0 }}" alt="" class="rounded" style="width: 120px; height: 90px; object-fit: cover;">
+          <div>
+            <h5 class="fw-bold mb-1">{{ listing.title }}</h5>
+            <p class="text-muted small mb-1"><i class="fa-solid fa-location-dot me-1"></i>{{ listing.address }}, {{ listing.city }}</p>
+            <span class="fw-bold text-success">${{ listing.monthly_rent|floatformat:0 }}/mo</span>
+            <span class="text-muted ms-2">{% if listing.bedrooms == 0 %}Studio{% else %}{{ listing.bedrooms }} BR{% endif %} &bull; {{ listing.property_type }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card border-0 shadow-sm">
+      <div class="card-body p-4">
+        <h4 class="fw-bold mb-1">Apply for This Listing</h4>
+        <p class="text-muted mb-4">Send your application to {{ listing.owner.first_name }} {{ listing.owner.last_name }}</p>
+
+        <form method="post">
+          {% csrf_token %}
+          <div class="card bg-light border-0 mb-4">
+            <div class="card-body">
+              <h6 class="fw-bold mb-2">Your Information</h6>
+              <div class="d-flex align-items-center gap-3">
+                <img src="{{ profile.profile_image|default:'https://i.pravatar.cc/150?img=1' }}" alt="" class="rounded-circle" width="48" height="48">
+                <div>
+                  <strong>{{ user.first_name }} {{ user.last_name }}</strong>
+                  <div class="text-muted small">{{ user.email }}</div>
+                  <div class="text-muted small">{{ profile.year }} &bull; {{ profile.major }}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row g-3 mb-3">
+            <div class="col-md-6"><label class="form-label fw-semibold">Requested Start Date</label><input type="date" name="requestedFrom" class="form-control" value="{{ listing.available_from|date:'Y-m-d' }}" required></div>
+            <div class="col-md-6"><label class="form-label fw-semibold">Requested End Date</label><input type="date" name="requestedTo" class="form-control" value="{{ listing.available_to|date:'Y-m-d' }}" required></div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label fw-semibold">Message to Lister</label>
+            <textarea name="message" class="form-control" rows="5" placeholder="Introduce yourself and explain why you're a great fit..." required></textarea>
+          </div>
+
+          <div class="d-flex gap-2">
+            <a href="{% url 'perchapp:listing_detail' listing.pk %}" class="btn btn-outline-secondary">Cancel</a>
+            <button type="submit" class="btn btn-maroon flex-fill fw-semibold"><i class="fa-solid fa-paper-plane me-2"></i>Submit Application</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

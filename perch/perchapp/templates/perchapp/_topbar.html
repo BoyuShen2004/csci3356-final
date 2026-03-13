@@ -1,0 +1,16 @@
+<header class="topbar">
+  <div class="d-flex align-items-center gap-3">
+    <h5 class="mb-0 fw-semibold text-dark d-none d-md-block">{% block topbar_title %}{{ page_title|default:"Perch" }}{% endblock %}</h5>
+  </div>
+  {% if user.is_authenticated %}
+  <div class="d-flex align-items-center gap-3">
+    <a href="{% url 'perchapp:messages' %}" class="btn btn-link text-dark position-relative p-0">
+      <i class="fa-solid fa-bell fs-5"></i>
+      {% if unread_count %}<span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.6rem;">{{ unread_count }}</span>{% endif %}
+    </a>
+    <a href="{% url 'perchapp:profile' %}" class="d-none d-md-flex align-items-center gap-2 text-decoration-none text-dark">
+      <img src="{{ profile.profile_image|default:'https://i.pravatar.cc/150?img=1' }}" alt="{{ display_first_name }}" class="rounded-circle border" width="32" height="32">
+    </a>
+  </div>
+  {% endif %}
+</header>

@@ -1,0 +1,71 @@
+{% extends "perchapp/base.html" %}
+{% block title %}Dashboard - Perch{% endblock %}
+{% block topbar_title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-start mb-3">
+  <div>
+    <div class="text-muted small">Welcome, <strong>{{ user.username }}</strong> - <strong>{{ profile.role|default:"student" }}</strong></div>
+  </div>
+</div>
+<div class="row g-3 mb-4">
+  <div class="col-6 col-md-3">
+    <a href="{% url 'perchapp:search' %}" class="text-decoration-none">
+    <div class="card border-0 shadow-sm h-100">
+      <div class="card-body text-center">
+        <div class="stat-icon bg-primary bg-opacity-10 text-primary mx-auto mb-2"><i class="fa-solid fa-building"></i></div>
+        <h4 class="fw-bold mb-0">{{ available_count }}</h4>
+        <small class="text-muted">Available Listings</small>
+      </div>
+    </div>
+    </a>
+  </div>
+  <div class="col-6 col-md-3">
+    <a href="{% url 'perchapp:applications' %}" class="text-decoration-none">
+    <div class="card border-0 shadow-sm h-100">
+      <div class="card-body text-center">
+        <div class="stat-icon bg-warning bg-opacity-10 text-warning mx-auto mb-2"><i class="fa-solid fa-file-lines"></i></div>
+        <h4 class="fw-bold mb-0">{{ pending_apps_count }}</h4>
+        <small class="text-muted">Pending Applications</small>
+      </div>
+    </div>
+    </a>
+  </div>
+  <div class="col-6 col-md-3">
+    <a href="{% url 'perchapp:favorites' %}" class="text-decoration-none">
+    <div class="card border-0 shadow-sm h-100">
+      <div class="card-body text-center">
+        <div class="stat-icon bg-danger bg-opacity-10 text-danger mx-auto mb-2"><i class="fa-solid fa-heart"></i></div>
+        <h4 class="fw-bold mb-0">{{ favorites_count }}</h4>
+        <small class="text-muted">Saved Listings</small>
+      </div>
+    </div>
+    </a>
+  </div>
+  <div class="col-6 col-md-3">
+    <a href="{% url 'perchapp:messages' %}" class="text-decoration-none">
+    <div class="card border-0 shadow-sm h-100">
+      <div class="card-body text-center">
+        <div class="stat-icon bg-success bg-opacity-10 text-success mx-auto mb-2"><i class="fa-solid fa-envelope"></i></div>
+        <h4 class="fw-bold mb-0">{{ unread_count }}</h4>
+        <small class="text-muted">Unread Messages</small>
+      </div>
+    </div>
+    </a>
+  </div>
+</div>
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h5 class="fw-bold mb-0">Recent Listings</h5>
+  <a href="{% url 'perchapp:search' %}" class="btn btn-sm btn-outline-primary">See All</a>
+</div>
+<div class="row g-3 mb-4">
+  {% for item in listing_data %}
+  <div class="col-md-6 col-lg-3">
+    {% include "perchapp/_listing_card.html" with listing=item.listing is_favorite=item.is_favorite %}
+  </div>
+  {% empty %}
+  <div class="col-12 text-center py-4 text-muted">No listings yet.</div>
+  {% endfor %}
+</div>
+{% endblock %}
