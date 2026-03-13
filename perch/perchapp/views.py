@@ -40,6 +40,8 @@ def login_view(request):
         msg_code = request.GET.get("message")
         if msg_code == "email_already_used":
             error = "That BC email is already used. Please sign in with it or use a different email to sign up."
+        elif msg_code == "account_not_registered":
+            error = "This Google account is not registered yet. Please use Sign up with Google first."
     if request.method == "POST":
         login_value = request.POST.get("username", "").strip()
         password = request.POST.get("password", "")
